@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
 import Axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 const Addstudent = () => {
     const [name, setName] = useState("")
     const [age, setAge] = useState("")
     const [course, setCourse] = useState("")
     const [subjects, setSubjects] = useState([])
-
-    console.log(name);
-    console.log(subjects)
-
+    const navigate = useNavigate()
     const handleCheckBoxChange = (e) => {
         const { value, checked } = e.target
         if (checked) {
@@ -21,10 +19,24 @@ const Addstudent = () => {
     }
 
     const handleSubmit = (e) => {
+        e.preventDefault()
+        if (!name || !age || !course || subjects.length === 0) {
+            alert("Fill all details")
+            return
+        }
         console.log(name);
         console.log(age);
         console.log(course);
         console.log(subjects);
+        Axios.post('http://localhost:5173/', { name, age, course, subjects }).then(response => {
+            console.log('Response:', response.date)
+            navigate('/', { replace: true })
+            window.location.reload();
+            alert("New Student added")
+        })
+            .catch(error => {
+                console.error('Error:', error)
+            })
     }
 
     return (
@@ -35,7 +47,7 @@ const Addstudent = () => {
                     <legend>Student Details</legend>
                     <div class="row">
                         <label class="form-label mt-4">Name</label>
-                        <input type="email" class="form-control" placeholder="Enter name" required onChange={(e) => setName(e.target.value)} />
+                        <input type="text" class="form-control" placeholder="Enter name" required onChange={(e) => setName(e.target.value)} />
                     </div>
 
                     <div class="row">
